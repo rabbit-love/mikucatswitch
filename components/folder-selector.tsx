@@ -7,6 +7,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Folder, Upload, AlertCircle, Info, ExternalLink, Play, Heart, Sparkles } from "lucide-react"
 import type { VideoData } from "@/lib/types"
 import { validateFolderStructure, loadVideoData } from "@/lib/file-utils"
+import { storage } from "@/lib/storage"
 
 interface FolderSelectorProps {
   onFolderSelected: (folder: FileSystemDirectoryHandle, videos: VideoData[]) => void
@@ -18,8 +19,10 @@ export function FolderSelector({ onFolderSelected }: FolderSelectorProps) {
   const [savedFolderInfo, setSavedFolderInfo] = useState<{ name: string; timestamp: number } | null>(null)
 
   useEffect(() => {
+    if (typeof window === "undefined") return
+
     // Check for previously selected folder
-    const savedInfo = localStorage.getItem("mikucat-folder-info")
+    const savedInfo = storage.getItem("mikucat-folder-info")
     if (savedInfo) {
       try {
         const folderInfo = JSON.parse(savedInfo)
@@ -29,9 +32,9 @@ export function FolderSelector({ onFolderSelected }: FolderSelectorProps) {
           setSavedFolderInfo(folderInfo)
         } else {
           // Clean up old data
-          localStorage.removeItem("mikucat-folder-info")
-          localStorage.removeItem("mikucat-folder")
-          localStorage.removeItem("mikucat-folder-timestamp")
+          storage.removeItem("mikucat-folder-info")
+          storage.removeItem("mikucat-folder")
+          storage.removeItem("mikucat-folder-timestamp")
         }
       } catch (error) {
         console.log("Error parsing saved folder info:", error)
@@ -40,6 +43,10 @@ export function FolderSelector({ onFolderSelected }: FolderSelectorProps) {
   }, [])
 
   const handleSelectFolder = async () => {
+    if (typeof window === "undefined") {
+      throw new Error("File System Access API is only available in browsers")
+    }
+
     try {
       setIsLoading(true)
       setError(null)

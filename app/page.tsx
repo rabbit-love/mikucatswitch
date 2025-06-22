@@ -7,6 +7,7 @@ import { VideoPlayer } from "@/components/video-player"
 import { ThemeToggle } from "@/components/theme-toggle"
 import type { VideoData } from "@/lib/types"
 import { Heart } from "lucide-react"
+import { storage } from "@/lib/storage"
 
 export default function App() {
   const [selectedFolder, setSelectedFolder] = useState<FileSystemDirectoryHandle | null>(null)
@@ -17,8 +18,10 @@ export default function App() {
   useEffect(() => {
     // Try to restore previously selected folder
     const restorePreviousFolder = async () => {
+      if (typeof window === "undefined") return
+
       try {
-        const savedFolderName = localStorage.getItem("mikucat-folder")
+        const savedFolderName = storage.getItem("mikucat-folder")
         if (!savedFolderName) return
 
         // Check if File System Access API is supported
@@ -54,8 +57,8 @@ export default function App() {
   const handleFolderPersistence = async (folder: FileSystemDirectoryHandle) => {
     try {
       // Store folder name and try to maintain reference
-      localStorage.setItem("mikucat-folder", folder.name)
-      localStorage.setItem("mikucat-folder-timestamp", Date.now().toString())
+      storage.setItem("mikucat-folder", folder.name)
+      storage.setItem("mikucat-folder-timestamp", Date.now().toString())
 
       // Try to store a reference (this might not work in all browsers)
       try {
@@ -66,7 +69,7 @@ export default function App() {
           name: folder.name,
           timestamp: Date.now(),
         }
-        localStorage.setItem("mikucat-folder-info", JSON.stringify(folderInfo))
+        storage.setItem("mikucat-folder-info", JSON.stringify(folderInfo))
       } catch (error) {
         console.log("Could not store folder reference:", error)
       }

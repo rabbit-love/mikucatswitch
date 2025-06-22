@@ -33,6 +33,7 @@ const poppins = Poppins({
 export const metadata: Metadata = {
   title: "mikucatswitch - Interactive Video Experience",
   description: "Beautiful interactive video viewer by _mikucat_",
+    generator: 'v0.dev'
 }
 
 export default function RootLayout({
@@ -42,6 +43,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+      </head>
       <body className={`${inter.variable} ${nunito.variable} ${comfortaa.variable} ${poppins.variable} font-sans`}>
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange>
           {children}

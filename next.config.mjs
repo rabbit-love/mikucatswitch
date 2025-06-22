@@ -1,5 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  output: 'export',
+  trailingSlash: true,
   eslint: {
     ignoreDuringBuilds: true,
   },
@@ -7,8 +9,15 @@ const nextConfig = {
     ignoreBuildErrors: true,
   },
   images: {
-    unoptimized: true,
+    unoptimized: true
   },
+  distDir: 'dist',
+  // Remove assetPrefix for fonts to work properly
+  // assetPrefix: './',
+  basePath: '',
+  experimental: {
+    esmExternals: 'loose'
+  }
 }
 
 export default nextConfig
